@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace EngineTest.Tests
@@ -9,29 +10,31 @@ namespace EngineTest.Tests
     class OverheatTimeTest : ITestFactory
     {
         public IEngine Engine { get; }
-        public double Time { get; } = 0;
 
         public OverheatTimeTest(IEngine engine)
         {
             this.Engine = engine;
         }
 
-        /// <summary>
-        /// Возвращает время, за которое перегреется двигатель.
-        /// </summary>
-        public double OverheatTime()
+        public void StartSimulation()
         {
-            Console.WriteLine($"Время до перегрева двигателя: {this.Time} секунд");
+            Engine.Start();
+        }
 
-            return Time;
+        public void Controller()
+        {
+            if (Engine.IsWorking == false)
+            {
+                OverheatTime();
+            }
         }
 
         /// <summary>
-        /// Возвращает ускорение коленвала при заданном крутящем моменте двигателя.
+        /// Возвращает время, за которое перегреется двигатель.
         /// </summary>
-        public double GetCrankshaftAcceleration(double torques)
+        public void OverheatTime()
         {
-            return torques / Engine.InertiaMoment;
+            Console.WriteLine($"Время до перегрева двигателя: {Math.Round(this.Engine.Time, 2)} секунд");
         }
     }
 }

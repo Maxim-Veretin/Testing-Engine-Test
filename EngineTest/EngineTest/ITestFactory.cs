@@ -12,13 +12,14 @@ namespace EngineTest
         /// Двигатель, который проходит тестирование.
         /// </summary>
         IEngine Engine { get; }
-        /// <summary>
-        /// Счётчик времени, в течении которого проходит тестирование.
-        /// </summary>
-        double Time { get; }
+
+        /// <summary> Запускает симуляцию в отдельном потоке. </summary>
+        void StartSimulation();
+        /// <summary> Следит за температурой двигателя, если двигатель перегрелся - останавливает симуляцию </summary>
+        void Controller();
         /// <summary>
         /// Метод, возвращающий длительность тестирования в секундах.
         /// </summary>
-        double OverheatTime();
+        void OverheatTime();
     }
 }
