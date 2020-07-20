@@ -25,7 +25,10 @@ namespace EngineTest.Tests
         {
             if (Engine.IsWorking == false)
             {
-                OverheatTime();
+                if (Math.Round(Engine.TEngine, 2) >= Engine.TOverheat)
+                    OverheatTime();
+                else
+                    Console.WriteLine("Двигатель отработал без перегрева");
             }
         }
 

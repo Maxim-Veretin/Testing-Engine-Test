@@ -20,10 +20,6 @@ namespace EngineTest.Engines
         public double Hv { get; } = 0.0001;
         public double C { get; } = 0.1;
         public double Time { get; set; } = 0;
-
-        /// <summary> Ускорение коленвала. </summary>
-        private double A { get; set; }
-        /// <summary> Ускорение коленвала. </summary>
         private double TAmbient { get; set; }
 
         /// <summary> Структура, хранящая скорость вращения коленвала, крутящий момент и ускорение в момент времени и время перехода в это состояние из предыдущего. </summary>
@@ -35,7 +31,7 @@ namespace EngineTest.Engines
             public double Time;
         }
 
-        private List<PointsOfTime> points = new List<PointsOfTime>();
+        private readonly List<PointsOfTime> points = new List<PointsOfTime>();
 
         public InternalCombustionEngine(double TAmbient)
         {
@@ -50,7 +46,7 @@ namespace EngineTest.Engines
             IsWorking = true;
             
             int currentPoint = 0; // текущая вершина графика
-            int offset = 0; // смещение по оси X относительно текущей вершины графика
+            double offset = 0; // смещение по оси X относительно текущей вершины графика
             int x1, x2, y1, y2; // координаты, интерполируемых точек
             double currentX, currentY; // координаты текущей точки
 
@@ -60,19 +56,24 @@ namespace EngineTest.Engines
                 x2 = V[currentPoint + 1];
                 y1 = M[currentPoint];
                 y2 = M[currentPoint + 1];
-                currentX = currentPoint + offset;
+                currentX = x1 + offset;
                 currentY = ((currentX - x1) * (y2 - y1) / (x2 - x1)) + y1;
 
-                PointsOfTime point = new PointsOfTime();
-                point.V = currentX;
-                point.M = currentY;
-                point.A = currentY / I;
+                PointsOfTime point = new PointsOfTime
+                {
+                    V = currentX,
+                    M = currentY,
+                    A = currentY / I
+                };
 
                 int lenght = points.ToArray().Length;
 
                 if (points.Count() > 0) // если в списке содержится не одна точка, вычисляем время перехода
                 {
-                    point.Time = (point.V - points.ToArray()[lenght - 1].V) / point.A;
+                    if (currentY == M[M.Length-1])
+                        point.Time = (point.V - points.ToArray()[lenght - 1].V) / points.ToArray()[lenght - 1].A;
+                    else
+                        point.Time = (point.V - points.ToArray()[lenght - 1].V) / point.A;
                 }
                 else // иначе приравниваем время к нулю, т.к. очевидно что это первая точка
                     point.Time = 0;
@@ -86,15 +87,14 @@ namespace EngineTest.Engines
 
                 Time += points.ToArray()[lenght].Time; // высчитываем сколько секунд уже проработал двигатель
 
-                if (TEngine >= TOverheat)
+                if (Math.Round(TEngine, 2) >= TOverheat)
                 {
                     Stop();
-                    break;
                 }
 
                 if (currentX == x2) // если координата X текущей точки равна координате X следующей точки
                 {
-                    if (currentX != M.Length) // и если текущая точка - не последняя в массиве заданных параметров
+                    if (currentX != V[V.Length-1]) // и если текущая точка - не последняя в массиве заданных параметров
                     {
                         currentPoint++; // то смещаем текущую вершину
                         offset = 0; // и обнуляем смещение
@@ -102,11 +102,10 @@ namespace EngineTest.Engines
                     else
                     {
                         Stop(); // иначе останавливаем симуляцию
-                        break;
                     }
                 }
                 else
-                    offset += 5; // если следующая вершина не была достигнута - увеличиваем смещение
+                    offset+=5; // если следующая вершина не была достигнута - увеличиваем смещение
             }
         }
 

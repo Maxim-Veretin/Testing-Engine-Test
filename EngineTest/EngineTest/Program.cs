@@ -15,13 +15,16 @@ namespace EngineTest
     {
         static void Main(string[] args)
         {
-            Dictionary<int, string> enginesID = new Dictionary<int, string>();
-            enginesID.Add(1, "1. ДСВ");
+            Dictionary<int, string> enginesID = new Dictionary<int, string> // словарь, содержащий список всех имеющихся типов двигателей
+            {
+                { 1, "1. ДСВ" }
+            };
+            Dictionary<int, string> testsID = new Dictionary<int, string> // словарь, содержащий список всех имеющихся типов тестовых стендов
+            {
+                { 1, "1. Рассчёт времени перегрева двигателя" }
+            };
 
-            Dictionary<int, string> testsID = new Dictionary<int, string>();
-            testsID.Add(1, "1. Рассчёт времени перегрева двигателя");
-
-            int tAmbient; // температура окружающей среды в градусах °C
+            double tAmbient; // температура окружающей среды в градусах °C
             int selectedEngineID; // номер выбранного двигателя
             int selectedTestID; // номер выбранного теста
             IEngine engine = null;
@@ -29,12 +32,12 @@ namespace EngineTest
 
             Console.Write("Введите температуру окружающей среды в градусах °C: ");
 
-            // проверка на корректность ввода температуры
+            #region// проверка на корректность ввода температуры
             while (true)
             {
                 try
                 {
-                    tAmbient = Convert.ToInt32(Console.ReadLine());
+                    tAmbient = Convert.ToDouble(Console.ReadLine());
                     break;
                 }
                 catch (FormatException)
@@ -42,13 +45,17 @@ namespace EngineTest
                     Console.Write("Введено некорректное значение! Введите число: ");
                 }
             }
+            #endregion
 
+            #region//выбор типа двигателя, проверка на корректность ввода и наличия двигателя в словаре
             Console.WriteLine("\nВыберите тип двигателя, для проведения тестирования:");
 
             foreach(var eng in enginesID)
             {
                 Console.WriteLine(eng.Value);
             }
+
+            Console.Write("Введите число: ");
 
             // проверка на корректность ввода и наличие двигателя в словаре
             while (true)
@@ -82,13 +89,17 @@ namespace EngineTest
                     Console.Write("Такого двигателя не существует! Попробуйте снова: ");
                 }
             }
+            #endregion
 
+            #region//выбор типа тестового стенда, проверка на корректность ввода и наличия тестового стенда в словаре
             Console.WriteLine("\nВыберите тип теста:");
 
             foreach (var eng in testsID)
             {
                 Console.WriteLine(eng.Value);
             }
+
+            Console.Write("Введите число: ");
 
             // проверка на корректность ввода и наличие теста в словаре
             while (true)
@@ -122,6 +133,7 @@ namespace EngineTest
                     Console.Write("Такого теста не существует! Попробуйте снова: ");
                 }
             }
+            #endregion
 
             Test(testStand);
 
