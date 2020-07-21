@@ -82,7 +82,7 @@ namespace EngineTest
                 }
                 catch (FormatException)
                 {
-                    Console.Write("Введено некорректное значение! Введите число: ");
+                    Console.Write("Введено некорректное значение! Введите число целое: ");
                 }
                 catch (Exception)
                 {
@@ -126,7 +126,7 @@ namespace EngineTest
                 }
                 catch (FormatException)
                 {
-                    Console.Write("Введено некорректное значение! Введите число: ");
+                    Console.Write("Введено некорректное значение! Введите число целое: ");
                 }
                 catch (Exception)
                 {
@@ -135,15 +135,10 @@ namespace EngineTest
             }
             #endregion
 
-            Test(testStand);
+            testStand.StartSimulation();
+            testStand.Controller();
 
             Console.ReadKey();
-        }
-
-        static void Test(ITestFactory test)
-        {
-            test.StartSimulation();
-            test.Controller();
         }
     }
 }

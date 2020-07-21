@@ -44,7 +44,7 @@ namespace EngineTest.Engines
             Console.WriteLine("\nДвигатель запущен");
 
             IsWorking = true;
-            
+
             int currentPoint = 0; // текущая вершина графика
             double offset = 0; // смещение по оси X относительно текущей вершины графика
             int x1, x2, y1, y2; // координаты, интерполируемых точек
@@ -66,14 +66,14 @@ namespace EngineTest.Engines
                     A = currentY / I
                 };
 
-                int lenght = points.ToArray().Length;
+                int indxLast = points.ToArray().Length;
 
                 if (points.Count() > 0) // если в списке содержится не одна точка, вычисляем время перехода
                 {
-                    if (currentY == M[M.Length-1])
-                        point.Time = (point.V - points.ToArray()[lenght - 1].V) / points.ToArray()[lenght - 1].A;
+                    if (currentY == M[M.Length - 1])
+                        point.Time = (point.V - points.ToArray()[indxLast - 1].V) / points.ToArray()[indxLast - 1].A;
                     else
-                        point.Time = (point.V - points.ToArray()[lenght - 1].V) / point.A;
+                        point.Time = (point.V - points.ToArray()[indxLast - 1].V) / point.A;
                 }
                 else // иначе приравниваем время к нулю, т.к. очевидно что это первая точка
                     point.Time = 0;
@@ -81,11 +81,11 @@ namespace EngineTest.Engines
                 points.Add(point);
 
                 // вычисляем изменения температуры двигателя
-                double Vh = GetHeatingRate(points.ToArray()[lenght].V, points.ToArray()[lenght].M);
+                double Vh = GetHeatingRate(points.ToArray()[indxLast].V, points.ToArray()[indxLast].M);
                 double Vc = GetCoolingRate(TAmbient);
                 TEngine += Vh + Vc;
 
-                Time += points.ToArray()[lenght].Time; // высчитываем сколько секунд уже проработал двигатель
+                Time += points.ToArray()[indxLast].Time; // высчитываем сколько секунд уже проработал двигатель
 
                 if (Math.Round(TEngine, 2) >= TOverheat)
                 {
@@ -94,7 +94,7 @@ namespace EngineTest.Engines
 
                 if (currentX == x2) // если координата X текущей точки равна координате X следующей точки
                 {
-                    if (currentX != V[V.Length-1]) // и если текущая точка - не последняя в массиве заданных параметров
+                    if (currentX != V[V.Length - 1]) // и если текущая точка - не последняя в массиве заданных параметров
                     {
                         currentPoint++; // то смещаем текущую вершину
                         offset = 0; // и обнуляем смещение
@@ -105,7 +105,7 @@ namespace EngineTest.Engines
                     }
                 }
                 else
-                    offset+=5; // если следующая вершина не была достигнута - увеличиваем смещение
+                    offset += 5; // если следующая вершина не была достигнута - увеличиваем смещение
             }
         }
 
@@ -114,14 +114,6 @@ namespace EngineTest.Engines
             IsWorking = false;
 
             Console.WriteLine("\nДвигатель остановлен");
-        }
-
-        /// <summary>
-        /// Возвращает ускорение коленвала при заданном крутящем моменте двигателя.
-        /// </summary>
-        public double GetCrankshaftAcceleration(double torques)
-        {
-            return torques / this.I;
         }
 
         /// <summary>
